@@ -97,7 +97,7 @@ If you experience UI glitches (e.g., overlapping icons, missing categories, or l
    ```bash
    nano clean-restart-plasma.sh
    ```
-   *Paste the content of the script into the file and save.*
+   *Paste the content of the script into the file and save. Don't forget to insert one empty line at end of the script.*
 2. **Apply permissions:** `chmod +x clean-restart-plasma.sh`
 3. **Execute:** `./clean-restart-plasma.sh`
 
