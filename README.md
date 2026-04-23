@@ -68,7 +68,7 @@ Hardware acceleration increases the power draw of the GPU. To ensure system stab
 
 * **The Dual-Cable Rule (High-End GPUs):** For cards like the AMD Vega 64, do **not** use a single "pig-tail" (bridged) cable for two power connectors. Use two independent cables directly from the PSU to prevent voltage sags.
 * **Cold Boot Requirement:** After making significant changes to the Hardware Acceleration stack, a **Cold Boot** (full shutdown and restart) is required to ensure the Kernel Mode Setting (KMS) and BIOS/UEFI handshakes are clean.
-* **Bootloader Sync:** Always verify your bootloader (Limine/Grub) is updated if the kernel was touched during the driver installation.
+* **Bootloader Sync:** Always verify your bootloader (Grub/Limine/rEFInd/Systemd-Boot) is updated if the kernel was touched during the driver installation.
 
 
 
