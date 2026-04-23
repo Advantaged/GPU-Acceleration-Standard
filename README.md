@@ -63,17 +63,28 @@ Successful verification via `vainfo` ensures the GPU handles the heavy lifting i
 
 ---
 
-## 4. Application Layer: Browser & OBS Configuration
+## 4. Hardware Integrity (ISO 9001 Compliance)
+Hardware acceleration increases the power draw of the GPU. To ensure system stability, follow these physical infrastructure rules:
+
+* **The Dual-Cable Rule (High-End GPUs):** For cards like the AMD Vega 64, do **not** use a single "pig-tail" (bridged) cable for two power connectors. Use two independent cables directly from the PSU to prevent voltage sags.
+* **Cold Boot Requirement:** After making significant changes to the Hardware Acceleration stack, a **Cold Boot** (full shutdown and restart) is required to ensure the Kernel Mode Setting (KMS) and BIOS/UEFI handshakes are clean.
+* **Bootloader Sync:** Always verify your bootloader (Limine/Grub) is updated if the kernel was touched during the driver installation.
+
+
+
+---
+
+## 5. Application Layer: Browser & OBS Configuration
 The OS-level driver must be explicitly enabled in your applications.
 
 ### Firefox / Cachy-Browser
-Navigate to `about:config` and verify the following Boolean flags:
+Navigate to `about:config` and verify the following Boolean flags (ISO 9001 dictates checking all three):
 * `media.ffmpeg.vaapi.enabled` → **true**
 * `media.rdd-ffmpeg.enabled` → **true**
 * `media.navigator.mediadatadecoder_vpx_enabled` → **true**
 
 ### OBS Studio (CachyOS Optimized)
-For the best experience without manual module hunting, use the optimized CachyOS build:
+For the best experience without manual module hunting, use the optimized CachyOS build provided by Peter Jung:
 ```bash
 sudo pacman -S obs-studio-browser
 ```
@@ -81,16 +92,16 @@ sudo pacman -S obs-studio-browser
 
 ---
 
-## 5. System Architecture & Kernel Strategy
-In modern Linux (Torvalds' current strategy), drivers are often modular. This allows using optimized kernels like `linux-cachyos-server` while swapping the graphics modules (Mesa) independently.
+## 6. System Architecture & Kernel Strategy
+In modern Linux, drivers are modular. This allows using optimized kernels like `linux-cachyos-server` while swapping the graphics modules (Mesa) independently in the user space.
 
 * **Bootloader:** `limine` (Faster init via `lz4` compression).
 * **Filesystem:** `zfs` (Maximum data integrity).
-* **Desktop:** `KDE Plasma` (Optimized for hardware interaction).
+* **Desktop:** `KDE Plasma` (Native vector graphics and superior Wayland support).
 
 ---
 
-> **ISO 9001 Note:** Always use `libva-utils` to audit the system after any major kernel or driver update to ensure the "VLD" entrypoints remain active.
+> **Administrative Note:** Always use `libva-utils` to audit the system after any major kernel or driver update to ensure the "VLD" entrypoints remain active.
 
 ---
 
