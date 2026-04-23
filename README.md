@@ -75,13 +75,12 @@ Hardware acceleration increases the power draw of the GPU. To ensure system stab
 The OS-level driver must be explicitly enabled in your applications.
 
 ### Firefox / Cachy-Browser
-Navigate to `about:config` and verify the following Boolean flags (ISO 9001 dictates checking all three):
+Navigate to `about:config` and verify the following Boolean flags:
 * `media.ffmpeg.vaapi.enabled` → **true**
 * `media.rdd-ffmpeg.enabled` → **true**
 * `media.navigator.mediadatadecoder_vpx_enabled` → **true**
 
 ### OBS Studio (CachyOS Optimized)
-For the best experience without manual module hunting, use the optimized CachyOS build provided by Peter Jung:
 ```bash
 sudo pacman -S obs-studio-browser
 ```
@@ -89,34 +88,40 @@ sudo pacman -S obs-studio-browser
 
 ---
 
-## 6. Troubleshooting: GUI Cache Refresh
-If you experience UI glitches (e.g., overlapping icons, missing categories, or layout shifts) after a resolution change or driver update, use the provided maintenance script.
+## 6. Troubleshooting: UI Geometry & Refresh
 
-### Procedure:
-1. **Download or Create:** Download the [`clean-restart-plasma.sh`](clean-restart-plasma.sh) script or create a new file:
-   ```bash
-   nano clean-restart-plasma.sh
-   ```
-   *Paste the content of the script into the file and save. Don't forget to insert one empty line at end of the script.*
+If you experience UI glitches (e.g., overlapping icons in the Application Menu or layout shifts) after enabling HWA, follow this two-step escalation:
+
+### Step A: Scaling Display, Fonts & Browser Zoom (Recommended)
+High DPI settings (like 200% or 225%) on 28" displays often cause mathematical rounding errors in Wayland, leading to "KickOff" menu overlaps.
+
+1. **Reduce Display Scaling:** Go to `System Settings` -> `Input & Output` -> `Display & Monitor`. Set `Scale` to **175%** (The CachyOS Sweet Spot).
+2. **Compensate with Fonts:** Go to `System Settings` -> `Appearance & Style` -> `Text & Fonts`. Increase your font size (e.g., from `10pt` to **`12pt`**). This maintains high visibility and readability across the OS.
+3. **Adjust Browser Zoom:** In Firefox, Brave, or Cachy-Browser, set the default zoom to your preference (e.g., 120% or higher) to compensate for the lower system scaling.
+
+*This "Fractional Down-scaling" strategy prevents geometry overlaps while keeping the interface quick, vivid, sharp, and readable.*
+
+### Step B: GUI Cache Refresh (Ultima Ratio)
+If scaling adjustments do not resolve the glitch, use the maintenance script to purge the Plasma 6 cache and force a redraw.
+
+**Procedure:**
+1. **Download/Create:** Use the [`clean-restart-plasma.sh`](clean-restart-plasma.sh) script.
 2. **Apply permissions:** `chmod +x clean-restart-plasma.sh`
 3. **Execute:** `./clean-restart-plasma.sh`
+*Note: Ensure you leave one empty line at the end of the script file to satisfy POSIX standards.*
 
 ---
 
 ## 7. System Architecture & Kernel Strategy
 In modern Linux, drivers are modular. This allows using optimized kernels like `linux-cachyos-server` while swapping the graphics modules (Mesa) independently in the user space.
 
-* **Bootloader:** `limine` (Faster init via `lz4` compression).
-* **Filesystem:** `zfs` (Maximum data integrity).
+* **Bootloader:** `limine` (Highly recommended: The CachyOS installer enables rapid `lz4` compression specifically through Limine).
+* **Filesystem:** `zfs` (CachyOS is the only desktop OS offering ZFS natively OOTB via the Calamares installer, providing enterprise-grade data integrity and snapshots).
 * **Desktop:** `KDE Plasma` (Native vector graphics and superior Wayland support).
 
 ---
 
-> **Administrative Note:** Always use `libva-utils` to audit the system after any major kernel or driver update to ensure the "VLD" entrypoints remain active.
-
----
-
 * **Merit to:** [Gemini AI](https://gemini.google.com/)
+* **License:** CC0 1.0 Universal
 
 ✅ **Done & Enjoy** ❗️
-
