@@ -52,7 +52,7 @@ Standard for Dell Optiplex SFFs. Highly recommended to reduce CPU heat during st
 
 ---
 
-## 3. Capability Analysis & SFF Advantages
+## 3. Capability Analysis & Advantages
 Successful verification via `vainfo` ensures the GPU handles the heavy lifting instead of the CPU.
 
 | Feature | Advantage for SFF (Intel/AMD iGPU) | Codecs Supported |
