@@ -1,7 +1,6 @@
 # GPU-Acceleration-Standard (VA-API)
 
-Standardized procedure for enabling and verifying hardware-accelerated video decoding/encoding. 
-*Note: This guide uses CachyOS (Arch-based) as the primary example, but the logic applies to Debian, Fedora, and others with adjusted package names.*
+Standardized procedure for enabling and verifying hardware-accelerated video decoding/encoding on **CachyOS**.
 
 ---
 
@@ -70,8 +69,6 @@ Hardware acceleration increases the power draw of the GPU. To ensure system stab
 * **Cold Boot Requirement:** After making significant changes to the Hardware Acceleration stack, a **Cold Boot** (full shutdown and restart) is required to ensure the Kernel Mode Setting (KMS) and BIOS/UEFI handshakes are clean.
 * **Bootloader Sync:** Always verify your bootloader (Grub/Limine/rEFInd/Systemd-Boot) is updated if the kernel was touched during the driver installation.
 
-
-
 ---
 
 ## 5. Application Layer: Browser & OBS Configuration
@@ -93,16 +90,18 @@ sudo pacman -S obs-studio-browser
 ---
 
 ## 6. Troubleshooting: GUI Cache Refresh
-If you experience UI glitches (e.g., overlapping icons, missing categories, or layout shifts) after a resolution change or driver update, use [`clean-restart-plasma.sh`](clean-restart-plasma.sh) script.
+If you experience UI glitches (e.g., overlapping icons, missing categories, or layout shifts) after a resolution change or driver update, use the provided maintenance script.
 
 ### Procedure:
-Download/Copy the script, make it executable, and run it.
-1. **Download the [`clean-restart-plasma.sh`](clean-restart-plasma.sh) script or create an emty file: `nano clean-restart-plasma.sh`, copy & paste the script inside letting an empty line after the end. Use in case your preferred editor).
-
+1. **Download or Create:** Download the [`clean-restart-plasma.sh`](clean-restart-plasma.sh) script or create a new file:
+   ```bash
+   nano clean-restart-plasma.sh
+   ```
+   *Paste the content of the script into the file and save.*
 2. **Apply permissions:** `chmod +x clean-restart-plasma.sh`
-
 3. **Execute:** `./clean-restart-plasma.sh`
 
+---
 
 ## 7. System Architecture & Kernel Strategy
 In modern Linux, drivers are modular. This allows using optimized kernels like `linux-cachyos-server` while swapping the graphics modules (Mesa) independently in the user space.
@@ -120,3 +119,4 @@ In modern Linux, drivers are modular. This allows using optimized kernels like `
 * **Merit to:** [Gemini AI](https://gemini.google.com/)
 
 ✅ **Done & Enjoy** ❗️
+
