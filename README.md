@@ -51,7 +51,16 @@ Standard for Dell Optiplex SFFs. Highly recommended to reduce CPU heat during st
 
 ---
 
-## 3. Capability Analysis & Advantages
+## 3. Hardware Integrity (ISO 9001 Compliance)
+Hardware acceleration increases the power draw of the GPU. To ensure system stability, follow these physical infrastructure rules:
+
+* **Bootloader Sync:** Always verify your bootloader (Grub/Limine/rEFInd/Systemd-Boot) is updated if the kernel was touched during the driver installation.
+* **Cold Boot Requirement:** After making significant changes to the Hardware Acceleration stack, a **Cold Boot** (full shutdown and restart) is required to ensure the Kernel Mode Setting (KMS) and BIOS/UEFI handshakes are clean.
+* **The Dual-Cable Rule (High-End GPUs):** For cards like the AMD Vega 64, do **not** use a single "pig-tail" (bridged) cable for two power connectors. Use two independent cables directly from the PSU to prevent voltage sags.
+
+---
+
+## 4. Capability Analysis & Advantages
 Successful verification via `vainfo` ensures the GPU handles the heavy lifting instead of the CPU.
 
 | Feature | Advantage for SFF (Intel/AMD iGPU) | Codecs Supported |
@@ -59,15 +68,6 @@ Successful verification via `vainfo` ensures the GPU handles the heavy lifting i
 | **Decoding** | Smooth 4K playback (Netflix/YouTube/VLC) with < 5% CPU load. | H.264, H.265 (HEVC), VP9, AV1 |
 | **Thermal Control** | Lower CPU temps = Silent fans on Small Form Factor PCs. | N/A |
 | **Encoding** | Zero-lag screen recording and live streaming in OBS Studio. | H.264, H.265 (VCE/VCN/QuickSync) |
-
----
-
-## 4. Hardware Integrity (ISO 9001 Compliance)
-Hardware acceleration increases the power draw of the GPU. To ensure system stability, follow these physical infrastructure rules:
-
-* **The Dual-Cable Rule (High-End GPUs):** For cards like the AMD Vega 64, do **not** use a single "pig-tail" (bridged) cable for two power connectors. Use two independent cables directly from the PSU to prevent voltage sags.
-* **Cold Boot Requirement:** After making significant changes to the Hardware Acceleration stack, a **Cold Boot** (full shutdown and restart) is required to ensure the Kernel Mode Setting (KMS) and BIOS/UEFI handshakes are clean.
-* **Bootloader Sync:** Always verify your bootloader (Grub/Limine/rEFInd/Systemd-Boot) is updated if the kernel was touched during the driver installation.
 
 ---
 
