@@ -92,7 +92,19 @@ sudo pacman -S obs-studio-browser
 
 ---
 
-## 6. System Architecture & Kernel Strategy
+## 6. Troubleshooting: GUI Cache Refresh
+If you experience UI glitches (e.g., overlapping icons, missing categories, or layout shifts) after a resolution change or driver update, use [`clean-restart-plasma.sh`](clean-restart-plasma.sh) script.
+
+### Procedure:
+Download/Copy the script, make it executable, and run it.
+1. **Download the [`clean-restart-plasma.sh`](clean-restart-plasma.sh) script or create an emty file: `nano clean-restart-plasma.sh`, copy & paste the script inside letting an empty line after the end. Use in case your preferred editor).
+
+2. **Apply permissions:** `chmod +x clean-restart-plasma.sh`
+
+3. **Execute:** `./clean-restart-plasma.sh`
+
+
+## 7. System Architecture & Kernel Strategy
 In modern Linux, drivers are modular. This allows using optimized kernels like `linux-cachyos-server` while swapping the graphics modules (Mesa) independently in the user space.
 
 * **Bootloader:** `limine` (Faster init via `lz4` compression).
