@@ -55,23 +55,29 @@ Standard for Dell Optiplex SFFs. Highly recommended to reduce CPU heat during st
 ## 3. Capability Analysis & SFF Advantages
 Successful verification via `vainfo` ensures the GPU handles the heavy lifting instead of the CPU.
 
-| Feature | Advantage for SFF (Intel/AMD iGPU) |
-| :--- | :--- |
-| **Decoding** | Smooth 4K playback (Netflix/YouTube) with < 5% CPU load. |
-| **Thermal Control** | Lower CPU temps = Silent fans on Small Form Factor PCs. |
-| **Encoding** | Allows hardware-accelerated screen recording/streaming. |
+| Feature | Advantage for SFF (Intel/AMD iGPU) | Codecs Supported |
+| :--- | :--- | :--- |
+| **Decoding** | Smooth 4K playback (Netflix/YouTube/VLC) with < 5% CPU load. | H.264, H.265 (HEVC), VP9, AV1 |
+| **Thermal Control** | Lower CPU temps = Silent fans on Small Form Factor PCs. | N/A |
+| **Encoding** | Zero-lag screen recording and live streaming in OBS Studio. | H.264, H.265 (VCE/VCN/QuickSync) |
 
 ---
 
-## 4. Application Layer: Browser Configuration
-The OS-level driver must be explicitly enabled in the browser.
+## 4. Application Layer: Browser & OBS Configuration
+The OS-level driver must be explicitly enabled in your applications.
 
 ### Firefox / Cachy-Browser
 Navigate to `about:config` and verify the following Boolean flags:
-
 * `media.ffmpeg.vaapi.enabled` → **true**
 * `media.rdd-ffmpeg.enabled` → **true**
 * `media.navigator.mediadatadecoder_vpx_enabled` → **true**
+
+### OBS Studio (CachyOS Optimized)
+For the best experience without manual module hunting, use the optimized CachyOS build:
+```bash
+sudo pacman -S obs-studio-browser
+```
+*Go to Settings -> Output -> Recording/Streaming and select the **Hardware (VA-API)** encoder.*
 
 ---
 
