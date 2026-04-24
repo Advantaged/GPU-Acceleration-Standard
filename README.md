@@ -4,59 +4,65 @@ Standardized procedure for enabling and verifying hardware-accelerated video dec
 
 ---
 
-## 1. Prerequisites
-Before modifying the system stack, install the verification utility. This is the **Primary Step** to prevent redundant driver installation.
+## 1. System Audit & Discovery
+**Goal:** Verify existing capabilities before modifying the system stack.
 
+### 1.1 Install Verification Utility
 ```bash
 # Required for all hardware types (CachyOS/Arch)
 sudo pacman -S --needed --noconfirm libva-utils
 ```
 
+### 1.2 Check Current Driver Status
+Execute:
+```bash
+vainfo
+```
+* **Status OK:** If you see a list of profiles (e.g., `VAEntrypointVLD`), your drivers are active. Skip to **Point 4.**
+* **Status Error:** If you get an error (e.g., `driver not found`), proceed to **Point 1.3.**
+
+### 1.3 Hardware Identification
+If **Point 1.2** failed, identify your GPU vendor to select the correct driver:
+```bash
+lspci -nnk | grep -A 3 -i vga
+```
+*Identify if you have **AMD**, **Intel**, or **NVIDIA**.*
+
 ---
 
-## 2. Hardware-Specific Implementation (iGPU & Discrete)
-Whether you use an integrated GPU (SFF machines) or a discrete card (Vega 64), follow the logic below.
+## 2. Hardware-Specific Implementation
+Based on the results from **Point 1.3**, follow the logic below.
 
 ### 🔴 AMD (Radeon Discrete & Ryzen iGPU)
-AMD drivers are typically integrated into the Mesa stack. **Verification must precede installation.**
-
-1. **Check existing status:**
+AMD drivers are typically integrated into the Mesa stack. 
+1. **Manual Install (Only if vainfo fails):**
    ```bash
-   vainfo
-   ```
-2. **Logic:** If `vainfo` displays codec profiles (e.g., `VAEntrypointVLD`), **no further action is required.**
-3. **Manual Install (Only if vainfo fails):**
-   ```bash
-   # Stable Branch (Recommended)
    sudo pacman -S --needed cachyos/libva-mesa-driver cachyos/mesa-vdpau
    ```
+2. **Verification:** Repeat **Point 1.2.**
 
 ### 🔵 Intel (Integrated UHD/Iris & Discrete Arc)
-Standard for Dell Optiplex SFFs. Highly recommended to reduce CPU heat during streaming.
-
 1. **Install Driver:**
    ```bash
    sudo pacman -S --needed --noconfirm intel-media-driver
    ```
-2. **Verify:**
-   ```bash
-   vainfo
-   ```
+2. **Verification:** Repeat **Point 1.2.**
 
 ### 🟢 NVIDIA (GeForce GTX/RTX)
 1. **Install Driver & Wrapper:**
    ```bash
    sudo pacman -S --needed --noconfirm nvidia-utils nvidia-vaapi-driver
    ```
+2. **Verification:** Repeat **Point 1.2.**
 
 ---
 
 ## 3. Hardware Integrity (ISO 9001 Compliance)
 Hardware acceleration increases the power draw of the GPU. To ensure system stability, follow these physical infrastructure rules:
 
-* **Bootloader Sync:** Always verify your bootloader (Grub/Limine/rEFInd/Systemd-Boot) is updated if the kernel was touched during the driver installation.
-* **Cold Boot Requirement:** After making significant changes to the Hardware Acceleration stack, a **Cold Boot** (full shutdown and restart) is required to ensure the Kernel Mode Setting (KMS) and BIOS/UEFI handshakes are clean.
-* **The Dual-Cable Rule (High-End GPUs):** For cards like the AMD Vega 64, do **not** use a single "pig-tail" (bridged) cable for two power connectors. Use two independent cables directly from the PSU to prevent voltage sags.
+* **3.1 Bootloader Sync:** Always verify your bootloader (Grub/Limine/rEFInd/Systemd-Boot) is updated if the kernel was touched during the driver installation.
+* **3.2 Cold Boot Requirement:** After making significant changes to the Hardware Acceleration stack, a **Cold Boot** (full shutdown and restart) is required to ensure the Kernel Mode Setting (KMS) and BIOS/UEFI handshakes are clean.
+* **3.3 The Dual-Cable Rule (High-End GPUs):** For cards like the AMD Vega 64, do **not** use a single "pig-tail" (bridged) cable for two power connectors. Use two independent cables directly from the PSU to prevent voltage sags.
 
 ---
 
@@ -74,17 +80,17 @@ Successful verification via `vainfo` ensures the GPU handles the heavy lifting i
 ## 5. Application Layer: Browser & OBS Configuration
 The OS-level driver must be explicitly enabled in your applications.
 
-### Firefox / Cachy-Browser
+### 5.1 Firefox / Cachy-Browser
 Navigate to `about:config` and verify the following Boolean flags:
 * `media.ffmpeg.vaapi.enabled` → **true**
 * `media.rdd-ffmpeg.enabled` → **true**
 * `media.navigator.mediadatadecoder_vpx_enabled` → **true**
 
-### OBS Studio (CachyOS Optimized)
+### 5.2 OBS Studio (CachyOS Optimized)
 ```bash
 sudo pacman -S obs-studio-browser
 ```
-*Go to Settings -> Output -> Recording/Streaming and select the **Hardware (VA-API)** encoder.*
+*Go to File -> Settings -> Output -> Output Mode -> Advanced -> Recording/Streaming and select the **Hardware (VA-API)** encoder.*
 
 ---
 
@@ -92,17 +98,14 @@ sudo pacman -S obs-studio-browser
 
 If you experience UI glitches (e.g., overlapping icons in the Application Menu or layout shifts) after enabling HWA, follow this two-step escalation:
 
-### Step A: Scaling Display, Fonts & Browser Zoom (Recommended)
-High DPI settings (like 200% or 225%) on 28" displays often cause mathematical rounding errors in Wayland, leading to "KickOff" menu overlaps.
-
+### Step 6.A: Scaling Display, Fonts & Browser Zoom (Recommended)
+High DPI settings on 28" displays often cause mathematical rounding errors in Wayland.
 1. **Reduce Display Scaling:** Go to `System Settings` -> `Input & Output` -> `Display & Monitor`. Set `Scale` to **175%** (The CachyOS Sweet Spot).
-2. **Compensate with Fonts:** Go to `System Settings` -> `Appearance & Style` -> `Text & Fonts`. Increase your font size (e.g., from `10pt` to **`12pt`**). This maintains high visibility and readability across the OS.
-3. **Adjust Browser Zoom:** In Firefox, Brave, or Cachy-Browser, set the default zoom to your preference (e.g., 120% or higher) to compensate for the lower system scaling.
+2. **Compensate with Fonts:** Go to `System Settings` -> `Appearance & Style` -> `Text & Fonts`. Increase your font size (e.g., from `10pt` to **`12pt`**).
+3. **Adjust Browser Zoom:** Set your default zoom in the browser to your preference (e.g., 120% or higher).
 
-*This "Fractional Down-scaling" strategy prevents geometry overlaps while keeping the interface quick, vivid, sharp, and readable.*
-
-### Step B: GUI Cache Refresh (Ultima Ratio)
-If scaling adjustments do not resolve the glitch, use the maintenance script to purge the Plasma 6 cache and force a redraw.
+### Step 6.B: GUI Cache Refresh (Ultima Ratio)
+If scaling adjustments do not resolve the glitch, use the maintenance script to purge the Plasma 6 cache.
 
 **Procedure:**
 1. **Download/Create:** Use the [`clean-restart-plasma.sh`](clean-restart-plasma.sh) script.
@@ -113,7 +116,7 @@ If scaling adjustments do not resolve the glitch, use the maintenance script to 
 ---
 
 ## 7. System Architecture & Kernel Strategy
-In modern Linux, drivers are modular. This allows using optimized kernels like `linux-cachyos-server` while swapping the graphics modules (Mesa) independently in the user space.
+In modern Linux, drivers are modular. This allows using optimized kernels like `linux-cachyos-server` while swapping the graphics modules independently in the user space.
 
 * **Bootloader:** `limine` (Highly recommended: The CachyOS installer enables rapid `lz4` compression specifically through Limine).
 * **Filesystem:** `zfs` (CachyOS is the only desktop OS offering ZFS natively OOTB via the Calamares installer, providing enterprise-grade data integrity and snapshots).
