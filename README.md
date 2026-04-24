@@ -90,7 +90,7 @@ Navigate to `about:config` and verify the following Boolean flags:
 ```bash
 sudo pacman -S obs-studio-browser
 ```
-*Go to File -> Settings -> Output -> Output Mode -> Advanced -> Recording/Streaming and select the **Hardware (VA-API)** encoder.*
+*Go to: File -> Settings -> Output -> Output Mode -> Advanced -> Recording/Streaming and select the **Hardware (VA-API)** encoder.*
 
 ---
 
