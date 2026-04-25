@@ -1,6 +1,8 @@
 # GPU-Acceleration-Standard (VA-API)
 
-Standardized procedure for enabling and verifying hardware-accelerated video decoding/encoding on **CachyOS**.
+Standardized procedure for enabling and verifying hardware-accelerated video decoding/encoding.
+
+> **Note on Compatibility:** This guide uses **CachyOS** (Arch-based) as the primary example. However, the logic and verification steps apply to **all Desktop Linux distributions** (Debian, Fedora, Ubuntu, etc.) by adjusting the specific package manager commands (e.g., using `apt` or `dnf` instead of `pacman`).
 
 ---
 
